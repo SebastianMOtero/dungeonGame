@@ -6,7 +6,7 @@ function Room:init(player)
 
 	self.tiles = {}
 	self:generateWallsAndFloors()
-	
+
 	self.entities = {}
 
 	self.objects = {}
@@ -56,11 +56,19 @@ function Room:generateWallsAndFloors()
 	end
 end
 
+function Room:update(dt)
+	self.player:update(dt)
+end
+
 function Room:render()
 	for y = 1, self.height do
 		for x = 1, self.width do
 			local tile = self.tiles[y][x]
 			love.graphics.draw(gTextures['tiles'], gFrames['tiles'][tile.id], (x - 1) * TILE_SIZE + self.renderOffsetX + self.adjacentOffsetX, (y - 1) * TILE_SIZE + self.renderOffsetY + self.adjacentOffsetY)
 		end
+	end
+
+	if self.player then
+		self.player:render()
 	end
 end

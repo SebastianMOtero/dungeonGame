@@ -4,18 +4,24 @@ Event = require 'lib/knife.event'
 Timer = require 'lib/knife.timer'
 
 --Utilities
-require 'src/Util'
+require 'src/Animation'
 require 'src/constants'
+require 'src/Entity'
+require 'src/entity_defs'
+require 'src/Player'
 require 'src/StateMachine'
+require 'src/Util'
 
 --
-require 'src/Player'
-require 'src/Entity'
 require 'src/world/Room'
 
---states
 require 'src/states/BaseState'
+--states
+require 'src/states/entity/EntityIdleState'
+require 'src/states/entity/player/PlayerIdleState'
+
 require 'src/states/game/PlayState'
+
 
 gTextures = {
 	['tiles'] = love.graphics.newImage('graphics/tilesheet.png'),
