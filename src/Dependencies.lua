@@ -11,6 +11,7 @@ require 'src/StateMachine'
 --
 require 'src/Player'
 require 'src/Entity'
+require 'src/world/Room'
 
 --states
 require 'src/states/BaseState'

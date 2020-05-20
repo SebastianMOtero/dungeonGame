@@ -4,6 +4,8 @@ function PlayState:init()
 	self.player = Player{
 
 	}
+
+	self.room = Room()
 end
 
 function PlayState:update(dt)
@@ -14,6 +16,8 @@ end
 
 function PlayState:render()
 	love.graphics.push()
+	--TO DO DELETE
+	self.room:render(self.player)
 	love.graphics.pop()
-	
+
 end
