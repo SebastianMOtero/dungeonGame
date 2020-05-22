@@ -29,8 +29,16 @@ TILE_LEFT_WALLS = {77, 96, 115}
 TILE_RIGHT_WALLS = {78, 97, 116}
 
 --map
+--padding 1 tile for each side
 MAP_WIDTH = VIRTUAL_WIDTH / TILE_SIZE - 2
 MAP_HEIGHT = math.floor(VIRTUAL_HEIGHT / TILE_SIZE) - 2
 
+--size of padding
 MAP_RENDER_OFFSET_X = (VIRTUAL_WIDTH - (MAP_WIDTH * TILE_SIZE)) / 2
 MAP_RENDER_OFFSET_Y = (VIRTUAL_HEIGHT - (MAP_HEIGHT * TILE_SIZE)) / 2
+
+--player
+PLAYER_WALK_SPEED = 60
+
+--width 1/1/20/1/1 = 24
+--height 1/1/9/1/1 = 13

@@ -14,11 +14,17 @@ require 'src/Util'
 
 --
 require 'src/world/Room'
+require 'src/world/Dungeon'
+require 'src/world/Doorway'
 
 require 'src/states/BaseState'
+
 --states
 require 'src/states/entity/EntityIdleState'
+require 'src/states/entity/EntityWalkState'
 require 'src/states/entity/player/PlayerIdleState'
+require 'src/states/entity/player/PlayerWalkState'
+require 'src/states/entity/player/PlayerSwingSwordState'
 
 require 'src/states/game/PlayState'
 

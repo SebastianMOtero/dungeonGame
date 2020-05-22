@@ -11,8 +11,15 @@ function Room:init(player)
 
 	self.objects = {}
 
-	self.doorways = {}
+	local doorsDirection = {'top', 'right', 'bottom', 'left'}
 
+	self.openDoor = 'nil'
+	self.doorways = {}
+	for k, direction in pairs(doorsDirection) do
+		if self.openDoor == direction or math.random(2) == 1 then
+			table.insert(self.doorways, Doorway(direction, self.openDoor == direction, self))
+		end
+	end
 	self.player = player
 
 	self.renderOffsetX = MAP_RENDER_OFFSET_X
@@ -61,11 +68,18 @@ function Room:update(dt)
 end
 
 function Room:render()
+
+	--render floor
 	for y = 1, self.height do
 		for x = 1, self.width do
 			local tile = self.tiles[y][x]
 			love.graphics.draw(gTextures['tiles'], gFrames['tiles'][tile.id], (x - 1) * TILE_SIZE + self.renderOffsetX + self.adjacentOffsetX, (y - 1) * TILE_SIZE + self.renderOffsetY + self.adjacentOffsetY)
 		end
+	end
+
+	--render doors
+	for k, doorway in pairs(self.doorways) do
+		doorway:render()
 	end
 
 	if self.player then

@@ -4,11 +4,15 @@ function Entity:init(def)
 	self.direction = 'down'
 
 	self.animations = self:createAnimations(def.animations)
+	self.walkSpeed = def.walkSpeed
 
 	self.x = def.x
 	self.y = def.y
 	self.width = def.width
 	self.height = def.height
+
+	self.offsetX = def.offsetX or 0
+	self.offsetY = def.offsetY or 0
 
 	self.health = def.health
 end
@@ -54,6 +58,6 @@ function Entity:update(dt)
 
 end
 
-function Entity:render()
+function Entity:render(adjacentOffsetX, adjacentOffsetY)
 	self.stateMachine:render()
 end
