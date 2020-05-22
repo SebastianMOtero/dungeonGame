@@ -9,6 +9,8 @@ require 'src/constants'
 require 'src/Entity'
 require 'src/entity_defs'
 require 'src/Player'
+require 'src/GameObject'
+require 'src/game_objects'
 require 'src/StateMachine'
 require 'src/Util'
 

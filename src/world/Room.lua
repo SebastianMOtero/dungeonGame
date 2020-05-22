@@ -10,6 +10,7 @@ function Room:init(player)
 	self.entities = {}
 
 	self.objects = {}
+	self:generateObjects()
 
 	local doorsDirection = {'top', 'right', 'bottom', 'left'}
 
@@ -63,8 +64,31 @@ function Room:generateWallsAndFloors()
 	end
 end
 
+function Room:generateObjects()
+	local switch = GameObject(
+		GAME_OBJECT_DEFS['switch'],
+		math.random(MAP_RENDER_OFFSET_X + TILE_SIZE, VIRTUAL_WIDTH - TILE_SIZE * 3),
+		math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE, VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16)
+	)
+
+	switch.onCollide = function()
+		if switch.state == 'unpressed' then
+			switch.state = 'pressed'
+		end
+	end
+	table.insert(self.objects, switch)
+end
+
 function Room:update(dt)
 	self.player:update(dt)
+
+	for k, object in pairs(self.objects) do
+		object:update(dt)
+
+		if self.player:collides(object) then
+			object:onCollide()
+		end
+	end
 end
 
 function Room:render()
@@ -80,6 +104,11 @@ function Room:render()
 	--render doors
 	for k, doorway in pairs(self.doorways) do
 		doorway:render()
+	end
+
+	--render objects
+	for k, object in pairs(self.objects) do
+		object:render()
 	end
 
 	if self.player then
