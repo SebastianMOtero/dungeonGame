@@ -1,6 +1,6 @@
 Room = Class{}
 
-function Room:init(player)
+function Room:init(player, openDoor)
 	self.width = MAP_WIDTH
 	self.height = MAP_HEIGHT
 
@@ -13,14 +13,20 @@ function Room:init(player)
 	self:generateObjects()
 
 	local doorsDirection = {'top', 'right', 'bottom', 'left'}
-
-	self.openDoor = 'nil'
+	self.openDoor = openDoor
 	self.doorways = {}
+
 	for k, direction in pairs(doorsDirection) do
-		if self.openDoor == direction or math.random(2) == 1 then
-			table.insert(self.doorways, Doorway(direction, self.openDoor == direction, self))
+		if direction ~= self.openDoor and math.random(2) == 1 then
+			table.insert(self.doorways, Doorway(direction, false, self))
 		end
 	end
+	--Always at least two doors
+	--TO DO
+	if #self.doorways == 0 then
+		table.insert(self.doorways, Doorway(self.openDoor == 'top' and 'left' or 'top', false, self))
+	end
+
 	self.player = player
 
 	self.renderOffsetX = MAP_RENDER_OFFSET_X
@@ -74,6 +80,12 @@ function Room:generateObjects()
 	switch.onCollide = function()
 		if switch.state == 'unpressed' then
 			switch.state = 'pressed'
+
+			for k, doorway in pairs(self.doorways) do
+				doorway.open = true
+			end
+
+			gSounds['door']:play()
 		end
 	end
 	table.insert(self.objects, switch)
@@ -103,15 +115,95 @@ function Room:render()
 
 	--render doors
 	for k, doorway in pairs(self.doorways) do
-		doorway:render()
+		doorway:render(self.adjacentOffsetX, self.adjacentOffsetY)
 	end
 
 	--render objects
 	for k, object in pairs(self.objects) do
-		object:render()
+		object:render(self.adjacentOffsetX, self.adjacentOffsetY)
 	end
+
+	--TO DO entities
+
+	love.graphics.stencil(function()
+		
+		--right
+		love.graphics.rectangle('fill', 
+		MAP_RENDER_OFFSET_X + (MAP_WIDTH * TILE_SIZE), MAP_RENDER_OFFSET_Y + (TILE_SIZE * 2), 
+		TILE_SIZE * 2 + 6, 
+		TILE_SIZE * (MAP_HEIGHT - 4)
+		)
+
+		--left
+		love.graphics.rectangle('fill', 
+			-TILE_SIZE - 6, 
+			MAP_RENDER_OFFSET_Y + (TILE_SIZE * 2), 
+			TILE_SIZE * 2 + 6, 
+			TILE_SIZE * (MAP_HEIGHT - 4)
+		)
+
+		--top
+		love.graphics.rectangle('fill', 
+			MAP_RENDER_OFFSET_X + (TILE_SIZE * 2), 
+			-TILE_SIZE - 6, 
+			TILE_SIZE * (MAP_WIDTH - 4),
+			TILE_SIZE * 2 + 12
+		)
+
+		--bottom
+		love.graphics.rectangle('fill', 
+			MAP_RENDER_OFFSET_X + (TILE_SIZE * 2), 
+			VIRTUAL_HEIGHT - TILE_SIZE - 6, 
+			TILE_SIZE * (MAP_WIDTH - 4),
+			TILE_SIZE * 2 + 12
+		)
+		
+	end, 'replace', 1)
+
+	love.graphics.setStencilTest('less', 1)
 
 	if self.player then
 		self.player:render()
 	end
+
+	love.graphics.setStencilTest()
+
+	--self:debug()
+end
+
+function Room:debug()
+	love.graphics.setColor(1, 0, 0, 1)
+
+	--right
+	love.graphics.rectangle('fill', 
+		MAP_RENDER_OFFSET_X + (MAP_WIDTH * TILE_SIZE), MAP_RENDER_OFFSET_Y + (TILE_SIZE * 2), 
+		TILE_SIZE * 2 + 6, 
+		TILE_SIZE * (MAP_HEIGHT - 4)
+	)
+
+	--left
+	love.graphics.rectangle('fill', 
+		-TILE_SIZE - 6, 
+		MAP_RENDER_OFFSET_Y + (TILE_SIZE * 2), 
+		TILE_SIZE * 2 + 6, 
+		TILE_SIZE * (MAP_HEIGHT - 4)
+	)
+
+	--top
+	love.graphics.rectangle('fill', 
+		MAP_RENDER_OFFSET_X + (TILE_SIZE * 2), 
+		-TILE_SIZE - 6, 
+		TILE_SIZE * (MAP_WIDTH - 4),
+		TILE_SIZE * 2 + 12
+	)
+
+	--bottom
+	love.graphics.rectangle('fill', 
+		MAP_RENDER_OFFSET_X + (TILE_SIZE * 2), 
+		VIRTUAL_HEIGHT - TILE_SIZE - 6, 
+		TILE_SIZE * (MAP_WIDTH - 4),
+		TILE_SIZE * 2 + 12
+	)
+
+	love.graphics.setColor(1, 1, 1, 1)
 end

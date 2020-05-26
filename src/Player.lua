@@ -12,8 +12,8 @@ function Player:collides(target)
 	local selfY, selfHeight = self.y + self.height / 2, self.height - self.height / 2
 
 	return not (
-		self.x + self.width - 5 < target.x or 
-		self.x + 5 > target.x + target.width or 
+		self.x + self.width < target.x or 
+		self.x > target.x + target.width or 
 		selfY + selfHeight < target.y or 
 		selfY > target.y +target.height)
 end

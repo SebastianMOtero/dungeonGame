@@ -1,39 +1,41 @@
 Doorway = Class{}
 
-function Doorway:init(direction, open, room)
+function Doorway:init(direction, open, room, x, y)
 	self.direction = direction
 	self.open = open
 	self.room = room
+	self.x = x
+	self.y = y
 
 	if direction == 'left' then
 		self.x = MAP_RENDER_OFFSET_X
-		self.y = MAP_RENDER_OFFSET_Y + (math.random(6)  + 1) * TILE_SIZE
+		self.y = self.y or MAP_RENDER_OFFSET_Y + (math.random(6)  + 1) * TILE_SIZE
 		self.height = 32
 		self.width = 16
 	elseif direction == 'right' then
-		self.x = MAP_RENDER_OFFSET_X + (MAP_WIDTH * TILE_SIZE) - TILE_SIZE
-		self.y = MAP_RENDER_OFFSET_Y + (math.random(6)  + 1) * TILE_SIZE
+		self.x =  MAP_RENDER_OFFSET_X + (MAP_WIDTH * TILE_SIZE) - TILE_SIZE
+		self.y = self.y or MAP_RENDER_OFFSET_Y + (math.random(6)  + 1) * TILE_SIZE
 		self.height = 32
 		self.width = 16
 	elseif direction == 'top' then --min 2 max 18
-		self.x = MAP_RENDER_OFFSET_X + (math.random(17) + 1) * TILE_SIZE 
+		self.x = self.x or MAP_RENDER_OFFSET_X + (math.random(17) + 1) * TILE_SIZE 
 		self.y = MAP_RENDER_OFFSET_Y
 		self.height = 16
 		self.width = 32
 	else
-		self.x = MAP_RENDER_OFFSET_X + (math.random(17) + 1) * TILE_SIZE 
+		self.x = self.x or MAP_RENDER_OFFSET_X + (math.random(17) + 1) * TILE_SIZE 
 		self.y = MAP_RENDER_OFFSET_Y + (MAP_HEIGHT * TILE_SIZE) - TILE_SIZE
 		self.height = 16
 		self.width = 32
 	end
 end
 
-function Doorway:render()
+function Doorway:render(offsetX, offsetY)
 	local texture = gTextures['tiles']
 	local quads = gFrames['tiles']
 
-	self.x = self.x
-	self.y = self.y
+	self.x = self.x + offsetX
+	self.y = self.y + offsetY
 
 	if self.direction == 'left' then
 		if self.open then
@@ -84,5 +86,8 @@ function Doorway:render()
 			love.graphics.draw(texture, quads[236], self.x + TILE_SIZE, self.y + TILE_SIZE)
 		end
 	end
+
+	self.x = self.x - offsetX
+	self.y = self.y - offsetY
 end
 

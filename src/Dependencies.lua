@@ -3,14 +3,16 @@ push = require 'lib/push'
 Event = require 'lib/knife.event'
 Timer = require 'lib/knife.timer'
 
+require 'src/conf'
 --Utilities
 require 'src/Animation'
 require 'src/constants'
 require 'src/Entity'
 require 'src/entity_defs'
-require 'src/Player'
 require 'src/GameObject'
 require 'src/game_objects'
+require 'src/Hitbox'
+require 'src/Player'
 require 'src/StateMachine'
 require 'src/Util'
 
@@ -29,7 +31,8 @@ require 'src/states/entity/player/PlayerWalkState'
 require 'src/states/entity/player/PlayerSwingSwordState'
 
 require 'src/states/game/PlayState'
-
+-- require 'src/states/game/StartState'
+-- require 'src/states/game/GameOverState'
 
 gTextures = {
 	['tiles'] = love.graphics.newImage('graphics/tilesheet.png'),
