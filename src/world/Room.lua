@@ -8,6 +8,7 @@ function Room:init(player, openDoor)
 	self:generateWallsAndFloors()
 
 	self.entities = {}
+	self:generateEntities()
 
 	self.objects = {}
 	self:generateObjects()
@@ -34,6 +35,38 @@ function Room:init(player, openDoor)
 
 	self.adjacentOffsetX = 0
 	self.adjacentOffsetY = 0
+end
+
+function Room:generateEntities()
+	local types = {'skeleton', 'slime', 'bat', 'ghost', 'spider'}
+
+	local cantMobs = math.random(10)
+
+	for i = 1, cantMobs do
+		local type = types[math.random(#types)]
+
+		table.insert(self.entities, Entity {
+			animations = ENTITY_DEFS[type].animations,
+			walkSpeed = ENTITY_DEFS[type].walkSpeed or 20,
+
+			x = math.random(MAP_RENDER_OFFSET_X + TILE_SIZE,
+				VIRTUAL_WIDTH - TILE_SIZE * 2 - 16),
+			y = math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE,
+				VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16),
+			
+			width = 16,
+			height = 16,
+
+			health = 1
+		})
+
+		self.entities[i].stateMachine = StateMachine {
+			['walk'] = function() return EntityWalkState(self.entities[i]) end,
+			['idle'] = function() return EntityIdleState(self.entities[i]) end
+		}
+
+		self.entities[i]:changeState('walk')
+	end
 end
 
 function Room:generateWallsAndFloors()
@@ -73,8 +106,8 @@ end
 function Room:generateObjects()
 	local switch = GameObject(
 		GAME_OBJECT_DEFS['switch'],
-		math.random(MAP_RENDER_OFFSET_X + TILE_SIZE, VIRTUAL_WIDTH - TILE_SIZE * 3),
-		math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE, VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16)
+		math.random(MAP_RENDER_OFFSET_X + TILE_SIZE, VIRTUAL_WIDTH - TILE_SIZE * 2 - 16),
+		math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE, 		VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16)
 	)
 
 	switch.onCollide = function()
@@ -92,8 +125,31 @@ function Room:generateObjects()
 end
 
 function Room:update(dt)
+	if self.adjacentOffsetX ~= 0 or self.adjacentOffsetY ~=0 then return end
+	
 	self.player:update(dt)
 
+	for i = #self.entities, 1, -1 do
+		local entity = self.entities[i]
+
+		if entity.health <= 0 then
+			entity.dead = true
+		elseif not entity.dead then
+			--TO DO entity:processAI({room = self}, dt)
+			entity:update(dt)
+		end
+
+		if not entity.dead and self.player:collides(entity) and not self.player.invulnerable then
+			gSounds['hit-player']:play()
+			self.player:damage(1)
+			-- self.player:goInvulnerable(1.5)
+
+			if self.player.health == 0 then
+		-- 		gStateMachine:change('game-over')
+			end
+		end
+	end
+	
 	for k, object in pairs(self.objects) do
 		object:update(dt)
 
@@ -123,7 +179,9 @@ function Room:render()
 		object:render(self.adjacentOffsetX, self.adjacentOffsetY)
 	end
 
-	--TO DO entities
+	for k, entity in pairs(self.entities) do
+		if not entity.dead then entity:render(self.adjacentOffsetX, self.adjacentOffsetY) end
+	end
 
 	love.graphics.stencil(function()
 		

@@ -14,10 +14,15 @@ function love.load()
 	love.graphics.setFont(gFonts['small'])
 
 	gStateMachine = StateMachine {
-		['play'] = function() return PlayState() end
+		['start'] = function() return StartState() end,
+		['play'] = function() return PlayState() end,
+		['game-over'] = function() return GameOverState() end
 	}
-	gStateMachine:change('play')
+	gStateMachine:change('start')
 
+	gSounds['music']:setLooping(true)
+	gSounds['music']:play()
+	
 	love.keyboard.keysPressed = {}
 end
 

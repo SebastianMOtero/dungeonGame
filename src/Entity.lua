@@ -59,5 +59,7 @@ function Entity:update(dt)
 end
 
 function Entity:render(adjacentOffsetX, adjacentOffsetY)
-	self.stateMachine:render()
+	self.x, self.y = self.x + (adjacentOffsetX or 0), self.y + (adjacentOffsetY or 0)
+	self.stateMachine:render()love.graphics.setColor(255, 255, 255, 255)
+    self.x, self.y = self.x - (adjacentOffsetX or 0), self.y - (adjacentOffsetY or 0)
 end

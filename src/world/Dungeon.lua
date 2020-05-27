@@ -36,7 +36,10 @@ function Dungeon:beginShifting(shiftX, shiftY, doorway, openDoor)
 	-- 	return
 	-- end
 	self.nextRoom = Room(self.player, openDoor)
-
+	
+	self.nextRoom.adjacentOffsetX = shiftX
+	self.nextRoom.adjacentOffsetY = shiftY
+	
 	local playerX, playerY = self.player.x, self.player.y
 	local openDoor
 
@@ -56,12 +59,6 @@ function Dungeon:beginShifting(shiftX, shiftY, doorway, openDoor)
 
 	table.insert(self.nextRoom.doorways, openDoor)
 
-	-- for k, doorway in pairs(self.nextRoom.doorways) do
-	-- 	doorway.open = true
-	-- end
-
-	self.nextRoom.adjacentOffsetX = shiftX
-	self.nextRoom.adjacentOffsetY = shiftY
 
 	Timer.tween(1, {
 		[self] = {cameraX = shiftX, cameraY = shiftY},
@@ -70,7 +67,7 @@ function Dungeon:beginShifting(shiftX, shiftY, doorway, openDoor)
 		self:finishShifting()
 
 		if shiftX > 0 then
-			self.player.x = playerX - VIRTUAL_WIDTH
+			self.player.x = MAP_RENDER_OFFSET_X + TILE_SIZE
 			self.player.direction = 'right'
 		elseif shiftX < 0 then
 			self.player.x = MAP_RENDER_OFFSET_X + (MAP_WIDTH * TILE_SIZE) - TILE_SIZE - self.player.width
