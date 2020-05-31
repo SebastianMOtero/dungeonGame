@@ -36,7 +36,6 @@ end
 
 function PlayState:render()
 	love.graphics.push()
-	--TO DO DELETE
 	self.dungeon:render()
 	love.graphics.pop()
 

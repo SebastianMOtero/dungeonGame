@@ -42,3 +42,6 @@ PLAYER_WALK_SPEED = 60
 
 --width 1/1/20/1/1 = 24
 --height 1/1/9/1/1 = 13
+
+BARREL = {110, 111}
+BOX = {109, 128}

@@ -3,7 +3,6 @@ push = require 'lib/push'
 Event = require 'lib/knife.event'
 Timer = require 'lib/knife.timer'
 
-require 'src/conf'
 --Utilities
 require 'src/Animation'
 require 'src/constants'

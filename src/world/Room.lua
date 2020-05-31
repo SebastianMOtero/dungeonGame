@@ -121,7 +121,15 @@ function Room:generateObjects()
 			gSounds['door']:play()
 		end
 	end
+
+	local barrel = GameObject(
+		GAME_OBJECT_DEFS['barrel'],
+		(math.random(MAP_WIDTH - 4) + 2) * TILE_SIZE,
+		(math.random(MAP_HEIGHT - 4) + 2) * TILE_SIZE
+	)
+
 	table.insert(self.objects, switch)
+	table.insert(self.objects, barrel)
 end
 
 function Room:update(dt)
@@ -135,23 +143,35 @@ function Room:update(dt)
 		if entity.health <= 0 then
 			entity.dead = true
 		elseif not entity.dead then
-			--TO DO entity:processAI({room = self}, dt)
+			entity:processAI({room = self}, dt)
 			entity:update(dt)
 		end
 
 		if not entity.dead and self.player:collides(entity) and not self.player.invulnerable then
 			gSounds['hit-player']:play()
 			self.player:damage(1)
-			-- self.player:goInvulnerable(1.5)
+			self.player:goInvulnerable(1.5)
 
 			if self.player.health == 0 then
-		-- 		gStateMachine:change('game-over')
+				gStateMachine:change('game-over')
 			end
 		end
 	end
 	
 	for k, object in pairs(self.objects) do
 		object:update(dt)
+
+		if self.player:collides(object) and object.solid == true then
+			if self.player.direction == 'up' then
+				self.player.y = (object.y + object.height - self.player.height / 2) + 0.1
+			elseif self.player.direction == 'down' then
+				self.player.y = object.y - self.player.height - 0.1
+			elseif self.player.direction == 'right' then
+				self.player.x = object.x - self.player.width - 0.1
+			elseif self.player.direction == 'left' then
+				self.player.x = object.x + object.width + 0.1
+			end
+		end
 
 		if self.player:collides(object) then
 			object:onCollide()

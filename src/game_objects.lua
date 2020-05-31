@@ -16,4 +16,18 @@ GAME_OBJECT_DEFS = {
 			}
 		}
 	},
+	['barrel'] = {
+		type = 'barrel',
+		texture = 'tiles',
+		frame = 110,--math.random(110, 111),
+		width = 16,
+		height = 16,
+		solid = true,
+		defaultState = 'barrel',
+		states = {
+			['barrel'] = {
+				frame = 111
+			}
+		}
+	}
 }

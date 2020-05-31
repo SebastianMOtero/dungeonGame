@@ -15,6 +15,14 @@ function Entity:init(def)
 	self.offsetY = def.offsetY or 0
 
 	self.health = def.health
+
+	self.invulnerable = false
+	self.invulnerableDuration = 0
+	self.invulnerableTimer = 0
+
+	self.flashTimer = 0
+
+	self.dead = false
 end
 
 function Entity:createAnimations(animations)
@@ -29,6 +37,11 @@ function Entity:createAnimations(animations)
 	end
 
 	return animationsReturned
+end
+
+function Entity:collides(target) 
+	return not (self.x + self.width < target.x or self.x > target.x + target.width or
+	self.y + self.height < target.y or self.y > target.y + target.height)
 end
 
 function Entity:damage(dmg)
@@ -49,6 +62,17 @@ function Entity:changeAnimation(name)
 end
 
 function Entity:update(dt)
+	if self.invulnerable then
+		self.flashTimer = self.flashTimer + dt
+		self.invulnerableTimer = self.invulnerableTimer + dt
+
+		if self.invulnerableTimer > self.invulnerableDuration then
+			self.invulnerable = false
+			self.invulnerableTimer = 0
+			self.invulnerableDuration = 0
+			self.flashTimer = 0
+		end
+	end
 
 	self.stateMachine:update(dt)
 
@@ -58,7 +82,17 @@ function Entity:update(dt)
 
 end
 
+function Entity:processAI(params, dt)
+	self.stateMachine:processAI(params, dt)
+end
+
 function Entity:render(adjacentOffsetX, adjacentOffsetY)
+
+	if self.invulnerable and self.flashTimer > 0.06 then
+		self.flashTimer = 0
+		love.graphics.setColor(1, 1, 1, 0.3)
+	end
+	
 	self.x, self.y = self.x + (adjacentOffsetX or 0), self.y + (adjacentOffsetY or 0)
 	self.stateMachine:render()love.graphics.setColor(255, 255, 255, 255)
     self.x, self.y = self.x - (adjacentOffsetX or 0), self.y - (adjacentOffsetY or 0)

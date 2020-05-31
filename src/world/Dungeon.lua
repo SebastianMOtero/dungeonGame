@@ -32,9 +32,7 @@ end
 
 function Dungeon:beginShifting(shiftX, shiftY, doorway, openDoor)
 	self.shifting = true
-	-- if doorwayAux.direction == 'top' or doorwayAux.direction == 'bottom' then
-	-- 	return
-	-- end
+
 	self.nextRoom = Room(self.player, openDoor)
 	
 	self.nextRoom.adjacentOffsetX = shiftX

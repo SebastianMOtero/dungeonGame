@@ -4,10 +4,21 @@ function EntityIdleState:init(entity)
 	self.entity = entity
 	self.entity:changeAnimation('idle-' .. self.entity.direction)
 
-	--TO DO IA
+	self.waitDuration = 0
+	self.waitTimer = 0
 end
 
---TO DO IA
+function EntityIdleState:processAI(params, dt)
+	if self.waitDuration == 0 then
+		self.waitDuration = math.random(5)
+	else
+		self.waitTimer = self.waitTimer + dt
+
+		if self.waitTimer > self.waitDuration then
+			self.entity:changeState('walk')
+		end
+	end
+end
 
 function EntityIdleState:render()
 	local anim = self.entity.currentAnimation

@@ -49,7 +49,12 @@ end
 
 function PlayerSwingSwordState:update(dt)
 
-	--TO DO SWORDHITBOX  ATTACK
+	for k, entity in pairs(self.dungeon.currentRoom.entities) do
+		if entity:collides(self.swordHitbox) then
+			entity:damage(1)
+			gSounds['hit-enemy']:play()
+		end
+	end
 
 	if self.player.currentAnimation.timesPlayed > 0 then
 		self.player.currentAnimation.timesPlayed = 0
@@ -57,7 +62,7 @@ function PlayerSwingSwordState:update(dt)
 	end
 
 	if love.keyboard.wasPressed('space') then
-		self.entity:changeState('swing-sword')
+		self.player:changeState('swing-sword')
 	end
 end
 
